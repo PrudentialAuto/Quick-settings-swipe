@@ -1,6 +1,7 @@
 package com.panelswipe.app
 
 import android.accessibilityservice.AccessibilityService
+import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Intent
 import android.util.TypedValue
 import android.view.InputDevice
@@ -50,9 +51,12 @@ class SwipeAccessibilityService : AccessibilityService() {
         homePackages = resolveHomePackages()
         statusBarHeightPx = resolveStatusBarHeight()
 
-        // Ask the framework to deliver touchscreen motion events to us. We set
-        // this at runtime in addition to the XML config so behaviour is explicit.
+        // Ask the framework to deliver touchscreen motion events to us. This is
+        // configured purely at runtime (there is no XML attribute for it):
+        // FLAG_SEND_MOTION_EVENTS opts in, and setMotionEventSources picks which
+        // input sources we want. The events are observed only, never consumed.
         serviceInfo = serviceInfo?.apply {
+            flags = flags or AccessibilityServiceInfo.FLAG_SEND_MOTION_EVENTS
             motionEventSources = InputDevice.SOURCE_TOUCHSCREEN
         }
     }
