@@ -1,0 +1,58 @@
+name: Build APK
+
+# Builds the debug APK on GitHub's servers (Android SDK is preinstalled there),
+# uploads it as a downloadable artifact, and publishes it to a rolling
+# "debug-latest" release for easy one-tap install from a phone.
+
+on:
+  push:
+    branches:
+      - "claude/android-home-screen-hotzone-f9z2dg"
+      - main
+  workflow_dispatch: {}   # lets you trigger a build manually from the Actions tab
+
+permissions:
+  contents: write          # needed to publish the release asset
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+
+      - name: Build debug APK
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PanelSwipe-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+
+      - name: Publish to rolling release
+        if: github.ref_name == 'claude/android-home-screen-hotzone-f9z2dg' || github.ref_name == 'main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: debug-latest
+          name: PanelSwipe debug (latest build)
+          body: >
+            Latest debug build of PanelSwipe, built automatically from
+            `${{ github.ref_name }}` (commit ${{ github.sha }}).
+            Download the APK below and install it (you may need to allow
+            installing from unknown sources).
+          files: app/build/outputs/apk/debug/app-debug.apk
+          make_latest: true
