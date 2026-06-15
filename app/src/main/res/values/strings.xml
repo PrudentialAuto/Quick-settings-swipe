@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">PanelSwipe</string>
+    <string name="accessibility_service_label">PanelSwipe</string>
+    <string name="accessibility_service_description">Lets PanelSwipe detect where you swipe down on the home screen so it can open the Notifications panel or the Quick Settings panel, like the status-bar hot zone. PanelSwipe only observes touch gestures on your home screen and never reads screen content.</string>
+</resources>

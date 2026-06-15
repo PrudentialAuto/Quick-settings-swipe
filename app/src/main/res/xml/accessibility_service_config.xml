@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Accessibility service configuration for PanelSwipe.
+
+  We use this service for two things:
+    1. Tracking which app is in the foreground (typeWindowStateChanged) so we
+       only act while the home screen / launcher is showing.
+    2. Observing raw touch motion events (motionEventSources="touchscreen",
+       Android 14+) to detect a downward swipe WITHOUT consuming the touch.
+       Because the events are only observed, app icons, taps and page swipes
+       continue to work normally.
+
+  We deliberately do NOT request touch exploration and do NOT retrieve window
+  content, to avoid changing touch behaviour and to keep the footprint minimal.
+-->
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accessibilityEventTypes="typeWindowStateChanged"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:accessibilityFlags="flagDefault"
+    android:canRetrieveWindowContent="false"
+    android:description="@string/accessibility_service_description"
+    android:motionEventSources="touchscreen"
+    android:notificationTimeout="0"
+    android:settingsActivity="com.panelswipe.app.MainActivity" />
